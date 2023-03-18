@@ -18,13 +18,13 @@ interface IILVIToken is IERC20 {
 
     function burn(address from, uint256 amount) external;
 
-    function domainSeparator() external view returns (bytes32);
-
     function setBackupAddress(address backupAddress) external;
 
     function emergencyTransfer(uint256 nonce, uint256 deadline, bytes calldata signature) external;
 
     function blacklistAddress(address account) external;
+
+    function domainSeparator() external view returns (bytes32);
 
     function isBlacklisted(address account) external view returns (bool);
 
