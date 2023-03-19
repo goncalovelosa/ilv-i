@@ -96,7 +96,7 @@ function if the compromised account has no ETH balance
 
 ### Example of a successful emergency transfer
 
-**Owner minting tokens** (10000000000000000000000) to `Compromised Account` tx hash:
+**Owner minting tokens** (10000000000000000000000) to [Compromised Account](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea) tx hash:
 [0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40](https://goerli.etherscan.io/tx/0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40)
 
 **Compromised Account** setting backup Address
@@ -107,6 +107,16 @@ backup account: [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://goerli.ethe
 
 **Using emergency transfer as owner** to transfer using the offline signature from the compromised account to send funds to `Backup account` tx hash:
 [0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac](https://goerli.etherscan.io/tx/0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac)
+
+### Used Accounts
+
+- Owner Account: [0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE](https://goerli.etherscan.io/address/0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE)
+
+- Compromised Account: [0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea)
+
+- Backup Account (registered for the compromised account): [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://goerli.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
+
+- Blacklisted Account: [0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea)
 
 License
 This contract is licensed under the MIT License.
