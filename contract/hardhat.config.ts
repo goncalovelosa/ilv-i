@@ -4,6 +4,7 @@ import 'hardhat-contract-sizer'
 import 'dotenv/config'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-solhint'
+import '@nomiclabs/hardhat-ethers/signers'
 
 const alchemyKey = process.env.ALCHEMY_KEY
 
