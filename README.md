@@ -71,7 +71,7 @@ For more information on the EIP712 standard, please refer to the Ethereum Improv
 
 `BACKUP_ACCOUNT`: the address of the backup account
 
-`NO_ETH_ACCOUNT`: the address of an account with no ETH balance, can be used to test the emergency transfer 
+`NO_ETH_ACCOUNT`: the address of an account with no ETH balance, can be used to test the emergency transfer
 function if the compromised account has no ETH balance
 
 ### To get started, run the following commands:
@@ -88,6 +88,25 @@ function if the compromised account has no ETH balance
 - `npm run backup:goerli` to set the backup address for the compromised account
 - `npm run blacklist:goerli` to blacklist an compromised account
 - `npm run isBlacklisted:goerli` to check if an account is blacklisted
+
+### Deployed Contracts Addresses
+
+- ILVIToken: [0x58506c80f9aa03a9e22bAa2020365244Eee0837C](https://goerli.etherscan.io/address/0x58506c80f9aa03a9e22baa2020365244eee0837c)
+- ILVTokenRelay: [0x9E4aed0edb0dBBDb67BA0A5a5eD572EbC8f7f950](https://goerli.etherscan.io/address/0x9e4aed0edb0dbbdb67ba0a5a5ed572ebc8f7f950)
+
+### Example of a successful emergency transfer
+
+**Owner minting tokens** (10000000000000000000000) to `Compromised Account` tx hash:
+[0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40](https://goerli.etherscan.io/tx/0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40)
+
+**Compromised Account** setting backup Address
+tx hash: [0x23bf3bfcae6bc35f4331c179f1c4047e735d1521fbf8b60bb8e0c146960e6223](https://goerli.etherscan.io/tx/0x23bf3bfcae6bc35f4331c179f1c4047e735d1521fbf8b60bb8e0c146960e6223)
+backup account: [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://goerli.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
+
+**Force depleting eth** from `Compromised account` tx hash: [0xaef6ad6230694b7fe62b8bde820f4ce241fcb3dda77534425895886f5698871e](https://goerli.etherscan.io/tx/0xaef6ad6230694b7fe62b8bde820f4ce241fcb3dda77534425895886f5698871e)
+
+**Using emergency transfer as owner** to transfer using the offline signature from the compromised account to send funds to `Backup account` tx hash:
+[0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac](https://goerli.etherscan.io/tx/0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac)
 
 License
 This contract is licensed under the MIT License.
