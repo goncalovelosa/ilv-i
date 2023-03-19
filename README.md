@@ -77,17 +77,25 @@ function if the compromised account has no ETH balance
 ### To get started, run the following commands:
 
 - `npm install` to install the dependencies
-- `npm run compile` to compile the contracts and generate the artifacts
+- `npm run compile` to compile the contracts and generate the artifacts also generates the typechain files
 - `npm run test` to run the tests (optional)
 
 ### To deploy the contract, run the following command:
 
 **note** :remember to set/update the environment variables before running this command
 
-- `npm run deploy:goerli` to deploy the contract to the Goerli testnet
-- `npm run backup:goerli` to set the backup address for the compromised account
-- `npm run blacklist:goerli` to blacklist an compromised account
+- `npm run deploy:goerli` to deploy the contract to the Goerli testnet and output the contract addresses
+- 'npm run mint:goerli' to mint tokens to an account
+- `npm run backup:goerli` to set the backup address for the an account
+- `npm run blacklist:goerli` to blacklist an account
 - `npm run isBlacklisted:goerli` to check if an account is blacklisted
+- `npm run emergencyTransfer:goerli` to execute an emergency transfer, outputting offline signature data and the transaction hash
+
+**Note**: Please update the scripts accounts (manually for now) to use accordingly, and in the case of the `emergencyTransfer` also update the offline signing details.
+
+Also included some adicional scripts measure contract size:
+
+- `npm run size` to measure the contract size
 
 ### Deployed Contracts Addresses
 
