@@ -2,9 +2,15 @@
 
 This is a Solidity smart contract called ILVIToken that implements the IILVIToken interface. It is used to manage the ILVIToken ERC20 token, which has the ability to mint and burn tokens, set backup addresses for token holders, permit token transfers, blacklist addresses, and as a safe measure if one has lose access to it's private keys, if previously registered a backup address it can transfer the tokens to that address with the relayer supporting the costs.
 
-## Contract Overview
+## Contracts Overview
+
+#### ILVIToken
 
 The ILVIToken contract inherits from three other contracts: ERC20, ERC20Permit, and Ownable. It also includes two mappings: backupAddresses and blacklist. These mappings are used to keep track of backup addresses for token holders and blacklisted addresses, respectively.
+
+#### ILVTokenRelay
+
+The ILVTokenRelay contract is used to relay the emergency transfer function to call on the ILVIToken contract, requires the user to sign the transaction data with the EIP712 standard, and then verifies the signature before executing the transferring the funds to the users previously registered backup account.
 
 ### Functions
 
