@@ -100,8 +100,6 @@ contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
      * @param account The address to blacklist.
      */
     function blacklistAddress(address account) public onlyOwner {
-        require(account != address(0), "ILVIToken: account is the zero address");
-        require(!blacklist[account], "ILVIToken: account is blacklisted");
         _blacklistAddress(account);
     }
 
@@ -132,6 +130,8 @@ contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
 
     function _blacklistAddress(address account) internal virtual {
         require(account != owner(), "ILVIToken: account is the owner");
+        require(account != address(0), "ILVIToken: account is the zero address");
+        require(!blacklist[account], "ILVIToken: account is blacklisted");
 
         blacklist[account] = true;
         emit BlacklistedAddressAdded(account);
