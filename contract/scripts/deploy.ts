@@ -10,7 +10,7 @@ async function main() {
       deployer = new Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', ethers.provider)
       break
     case 'goerli':
-      deployer = new Wallet(process.env.PRIVATE_KEY_ACCOUNT_1 as string, ethers.provider)
+      deployer = new Wallet(process.env.OWNER_ACCOUNT as string, ethers.provider)
       break
     default:
       deployer = signers[0]

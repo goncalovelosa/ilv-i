@@ -2,44 +2,18 @@
 pragma solidity ^0.8.18;
 
 import "./interfaces/IILVIToken.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import { ERC20, ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
-contract ILVIToken is IILVIToken, ERC20, Pausable, Ownable, EIP712 {
+contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
     mapping(address => address) public backupAddresses;
     mapping(address => bool) public blacklist;
-    mapping(address => uint256) public nonces;
 
-    bytes32 private constant RECOVERY_TRANSFER_TYPEHASH =
-        keccak256(
-            "EmergencyTransfer(address token,address from,address to,uint256 amount,uint256 nonce,uint256 deadline)"
-        );
-
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) EIP712(name, "1") {}
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) ERC20Permit(name) {}
 
     /****************************************/
     /*               Public                 */
     /****************************************/
-
-    /**
-     * @notice Pauses the contract.
-     * @dev Only callable by the owner.
-     */
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    /**
-     * @notice Unpause the contract.
-     * @dev Only callable by the owner.
-     */
-    function unpause() public onlyOwner {
-        _unpause();
-    }
 
     /**
      * @notice Mints tokens.
@@ -76,41 +50,42 @@ contract ILVIToken is IILVIToken, ERC20, Pausable, Ownable, EIP712 {
             backupAddresses[msg.sender] != backupAddress,
             "ILVIToken: backup address is already set to that same address"
         );
-        backupAddresses[msg.sender] = backupAddress;
-        emit BackupAddressSet(msg.sender, backupAddress);
+        _setBackupAccount(msg.sender, backupAddress);
+    }
+
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public virtual override(ERC20Permit, IILVIToken) {
+        require(spender != address(0), "ILVIToken: spender is the zero address");
+        require(!blacklist[owner], "ILVIToken: owner address is blacklisted");
+        require(!blacklist[spender], "ILVIToken: spender address is blacklisted");
+        super.permit(owner, spender, value, deadline, v, r, s);
     }
 
     /**
-     * @notice recovers tokens from caller to it's backup address.
-     * @param nonce The nonce of the recovery.
-     * @param signature The signature of the recovery.
+     * @notice Approves and transfers tokens from one address to another.
+     * @dev Only callable by non blacklisted address.
+     * @param from The address to transfer tokens from.
+     * @param deadline The address to transfer tokens to.
+     * @param v The
+     * @param r The
+     * @param s The
      */
-    function emergencyTransfer(uint256 nonce, uint256 deadline, bytes calldata signature) public {
-        require(nonce == nonces[msg.sender], "ILVIToken: invalid nonce");
-        require(block.timestamp <= deadline, "Signature expired");
-
-        uint256 amount = balanceOf(msg.sender);
-        require(amount > 0, "ILVIToken: no tokens to recover");
-
-        bytes32 structHash = keccak256(
-            abi.encode(
-                RECOVERY_TRANSFER_TYPEHASH,
-                address(this),
-                msg.sender,
-                backupAddresses[msg.sender],
-                amount,
-                nonce,
-                deadline
-            )
-        );
-        bytes32 digest = _hashTypedDataV4(structHash);
-        address signer = ECDSA.recover(digest, signature);
-        require(signer == msg.sender, "ILVIToken: invalid signature");
-
-        nonces[msg.sender] = nonces[msg.sender] + 1;
-        _transfer(msg.sender, backupAddresses[msg.sender], amount);
-        blacklist[backupAddresses[msg.sender]] = true;
-        emit EmergencyTransfer(msg.sender, backupAddresses[msg.sender], amount);
+    function emergencyTransfer(address from, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {
+        uint256 amount = balanceOf(from);
+        require(amount > 0, "ILVIToken: no tokens to transfer");
+        address to = backupAddresses[from];
+        require(to != address(0), "ILVIToken: backup address is not set");
+        permit(from, to, amount, deadline, v, r, s);
+        transferFrom(from, to, amount);
+        emit EmergencyTransfer(from, to, amount);
+        _blacklistAddress(from);
     }
 
     /**
@@ -121,14 +96,7 @@ contract ILVIToken is IILVIToken, ERC20, Pausable, Ownable, EIP712 {
     function blacklistAddress(address account) public onlyOwner {
         require(account != address(0), "ILVIToken: account is the zero address");
         require(!blacklist[account], "ILVIToken: account is blacklisted");
-        require(account != owner(), "ILVIToken: account is the owner");
-
-        blacklist[account] = true;
-        emit BlacklistedAddressAdded(account);
-    }
-
-    function domainSeparator() public view returns (bytes32) {
-        return _domainSeparatorV4();
+        _blacklistAddress(account);
     }
 
     /**
@@ -151,12 +119,24 @@ contract ILVIToken is IILVIToken, ERC20, Pausable, Ownable, EIP712 {
     /*               Internal               */
     /****************************************/
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override whenNotPaused {
+    function _setBackupAccount(address origninalAccount, address backupAccount) internal {
+        backupAddresses[origninalAccount] = backupAccount;
+        emit BackupAddressSet(origninalAccount, backupAccount);
+    }
+
+    function _blacklistAddress(address account) internal virtual {
+        require(account != owner(), "ILVIToken: account is the owner");
+
+        blacklist[account] = true;
+        emit BlacklistedAddressAdded(account);
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
         require(!blacklist[to], "ILVIToken: Recipient address is blacklisted.");
         super._beforeTokenTransfer(from, to, amount);
     }
 
-    function _afterTokenTransfer(address from, address to, uint256 amount) internal override whenNotPaused {
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
         super._afterTokenTransfer(from, to, amount);
     }
 }

@@ -10,21 +10,25 @@ interface IILVIToken is IERC20 {
 
     event BlacklistedAddressAdded(address indexed account);
 
-    function pause() external;
-
-    function unpause() external;
-
     function mint(address to, uint256 amount) external;
 
     function burn(address from, uint256 amount) external;
 
     function setBackupAddress(address backupAddress) external;
 
-    function emergencyTransfer(uint256 nonce, uint256 deadline, bytes calldata signature) external;
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external;
+
+    function emergencyTransfer(address from, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 
     function blacklistAddress(address account) external;
-
-    function domainSeparator() external view returns (bytes32);
 
     function isBlacklisted(address account) external view returns (bool);
 
