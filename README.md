@@ -1,6 +1,6 @@
 # Introduction
 
-This is a Solidity smart contract called ILVIToken that implements the IILVIToken interface. It is used to manage the ILVIToken ERC20 token, which has the ability to mint and burn tokens, set backup addresses for token holders, permit token transfers, blacklist addresses, and as a safe measure if one has lose access to it's private keys, if previously registered a backup address it can transfer the tokens to that address paying the cost of the transfer on the destination account..
+This is a Solidity smart contract called ILVIToken that implements the IILVIToken interface. It is used to manage the ILVIToken ERC20 token, which has the ability to mint and burn tokens, set backup addresses for token holders, permit token transfers, blacklist addresses, and as a safe measure if one has lose access to it's private keys, if previously registered a backup address it can transfer the tokens to that address with the relayer supporting the costs.
 
 ## Contract Overview
 
