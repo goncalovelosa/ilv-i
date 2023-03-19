@@ -22,7 +22,14 @@ contract ILVTokenRelay is IILVTokenRelay, Ownable {
      * @param r signature part
      * @param s signature part
      */
-    function emergencyTransfer(address owner, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
+    function emergencyTransfer(
+        address owner,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external onlyOwner {
         uint256 balance = ILVIToken.balanceOf(owner);
         require(balance > 0, "ILVTokenRelay: balance is zero");
         ILVIToken.permit(owner, address(this), value, deadline, v, r, s);
