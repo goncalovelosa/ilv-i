@@ -9,7 +9,7 @@ async function main() {
   const ILVRelay = getRelayContract()
 
   const accounts = await getWallets(network.name)
-  const account = accounts.noEthAccount
+  const account = accounts.compromised
   const backupAccount = await ILVIToken.getBackupAddress(account.address)
 
   const balance = await ILVIToken.balanceOf(account.address)
@@ -21,8 +21,15 @@ async function main() {
 
   const deadLine = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 20)
 
-  const signature = await getPermitSignature(account, ILVIToken, ILVIToken.address, balanceParsed, deadLine)
+  const signature = await getPermitSignature(account, ILVIToken, ILVRelay.address, balanceParsed, deadLine)
   const { v, r, s } = signature
+
+  // generate offline signature
+  console.log(`balance: ${balance}`)
+  console.log(`deadLine: ${deadLine}`)
+  console.log(`v: ${v}`)
+  console.log(`r: ${r}`)
+  console.log(`s: ${s}`)
 
   const relayTx = await ILVRelay.connect(accounts.owner).emergencyTransfer(account.address, balance, deadLine, v, r, s)
   const receipt = await relayTx.wait(2)
