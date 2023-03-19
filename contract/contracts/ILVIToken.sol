@@ -62,7 +62,6 @@ contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
         bytes32 r,
         bytes32 s
     ) public virtual override(ERC20Permit, IILVIToken) {
-        require(spender != address(0), "ILVIToken: spender is the zero address");
         require(!blacklist[owner], "ILVIToken: owner address is blacklisted");
         require(!blacklist[spender], "ILVIToken: spender address is blacklisted");
         super.permit(owner, spender, value, deadline, v, r, s);
@@ -71,21 +70,18 @@ contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
     /**
      * @notice Approves and transfers tokens from one address to another.
      * @dev Only callable by non blacklisted address.
-     * @param from The address to transfer tokens from.
      * @param deadline The address to transfer tokens to.
      * @param v The
      * @param r The
      * @param s The
      */
-    function emergencyTransfer(address from, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {
-        uint256 amount = balanceOf(from);
+    function emergencyTransfer(uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
+        uint256 amount = balanceOf(msg.sender);
         require(amount > 0, "ILVIToken: no tokens to transfer");
-        address to = backupAddresses[from];
-        require(to != address(0), "ILVIToken: backup address is not set");
-        permit(from, to, amount, deadline, v, r, s);
-        transferFrom(from, to, amount);
-        emit EmergencyTransfer(from, to, amount);
-        _blacklistAddress(from);
+        address to = backupAddresses[msg.sender];
+        permit(msg.sender, to, amount, deadline, v, r, s);
+        _transfer(msg.sender, to, amount);
+        _blacklistAddress(msg.sender);
     }
 
     /**
@@ -134,9 +130,5 @@ contract ILVIToken is IILVIToken, ERC20, ERC20Permit, Ownable {
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
         require(!blacklist[to], "ILVIToken: Recipient address is blacklisted.");
         super._beforeTokenTransfer(from, to, amount);
-    }
-
-    function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
-        super._afterTokenTransfer(from, to, amount);
     }
 }

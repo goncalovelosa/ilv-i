@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IILVIToken is IERC20 {
     event BackupAddressSet(address indexed account, address indexed backupAddress);
 
-    event EmergencyTransfer(address indexed from, address indexed to, uint256 amount);
-
     event BlacklistedAddressAdded(address indexed account);
 
     function mint(address to, uint256 amount) external;
@@ -26,7 +24,7 @@ interface IILVIToken is IERC20 {
         bytes32 s
     ) external;
 
-    function emergencyTransfer(address from, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+    function emergencyTransfer(uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 
     function blacklistAddress(address account) external;
 
