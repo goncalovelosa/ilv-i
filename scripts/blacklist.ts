@@ -1,9 +1,9 @@
 import { network } from 'hardhat'
-import { getContract } from './utils/getContract'
+import { getTokenContract } from './utils/getContract'
 import { getWallets } from './utils/signer'
 
 async function main() {
-  const ILVIToken = getContract()
+  const ILVIToken = getTokenContract()
 
   const accounts = await getWallets(network.name)
 
