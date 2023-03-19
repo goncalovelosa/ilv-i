@@ -32,7 +32,7 @@ const config: HardhatUserConfig = {
     alphaSort: true,
     runOnCompile: false,
     disambiguatePaths: false,
-    only: ['ILVIToken.sol'],
+    except: ['Counters', 'ERC20', 'ECDSA', 'Math', 'Strings'],
   },
 }
 
