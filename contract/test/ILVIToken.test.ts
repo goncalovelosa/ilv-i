@@ -2,6 +2,8 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ILVIToken } from '../typechain-types'
+import { getPermitSignature } from './fixtures'
+import { BigNumber } from 'ethers'
 
 describe('ILVIToken', function () {
   let contract: ILVIToken
@@ -13,8 +15,6 @@ describe('ILVIToken', function () {
   let blacklistedAccountAddress: string
   let backupAccount: SignerWithAddress
   let backupAccountAddress: string
-  let otherBackupAccount: SignerWithAddress
-  let otherBackupAccountAddress: string
   let otherCompromisedAccount: SignerWithAddress
   let otherCompromisedAccountAddress: string
 
@@ -30,8 +30,6 @@ describe('ILVIToken', function () {
     backupAccountAddress = backupAccount.address
     otherCompromisedAccount = accounts[4]
     otherCompromisedAccountAddress = otherCompromisedAccount.address
-    otherBackupAccount = accounts[5]
-    otherBackupAccountAddress = otherBackupAccount.address
     const Token = await ethers.getContractFactory('ILVIToken')
     contract = await Token.deploy('ILVIToken', 'ILVI')
     await contract.deployed()
@@ -161,6 +159,74 @@ describe('ILVIToken', function () {
       await expect(
         contract.connect(otherCompromisedAccount).setBackupAddress(blacklistedAccountAddress),
       ).to.be.revertedWith('ILVIToken: backup address is blacklisted')
+    })
+  })
+
+  describe('Emergency Transfer', function () {
+    it('Should transfer tokens to backup address using emergency transfer', async function () {
+      await expect(contract.connect(compromisedAccount).setBackupAddress(backupAccountAddress))
+        .to.emit(contract, 'BackupAddressSet')
+        .withArgs(compromisedAccountAddress, backupAccountAddress)
+
+      expect(await contract.getBackupAddress(compromisedAccountAddress)).to.equal(backupAccountAddress)
+
+      const deadLine = ethers.constants.MaxUint256
+
+      const balance = await contract.balanceOf(compromisedAccountAddress)
+
+      const { v, r, s } = await getPermitSignature(
+        compromisedAccount,
+        contract,
+        backupAccountAddress,
+        balance,
+        deadLine,
+      )
+
+      expect(await contract.connect(compromisedAccount).emergencyTransfer(deadLine, v, r, s))
+        .to.emit(contract, 'Transfer')
+        .withArgs(compromisedAccountAddress, backupAccountAddress, balance)
+        .to.emit(contract, 'BlacklistedAddressAdded')
+        .withArgs(compromisedAccountAddress)
+      expect(await contract.balanceOf(compromisedAccountAddress)).to.equal(0)
+      expect(await contract.balanceOf(backupAccountAddress)).to.equal(balance)
+    })
+
+    it('Should fail to transfer tokens to backup address using emergency transfer if backup address is not set', async function () {
+      const deadLine = ethers.constants.MaxUint256
+
+      const balance = await contract.balanceOf(compromisedAccountAddress)
+
+      const { v, r, s } = await getPermitSignature(
+        compromisedAccount,
+        contract,
+        ethers.constants.AddressZero,
+        balance,
+        deadLine,
+      )
+
+      await expect(contract.connect(compromisedAccount).emergencyTransfer(deadLine, v, r, s)).to.be.revertedWith(
+        'ERC20: approve to the zero address',
+      )
+    })
+
+    it('Should fail to transfer tokens to backup address if it has zero balance', async function () {
+      await contract.connect(otherCompromisedAccount).setBackupAddress(backupAccountAddress)
+      const deadLine = ethers.constants.MaxUint256
+      const { v, r, s } = await getPermitSignature(otherCompromisedAccount, contract, backupAccountAddress, 0, deadLine)
+
+      await expect(contract.connect(otherCompromisedAccount).emergencyTransfer(deadLine, v, r, s)).to.be.revertedWith(
+        'ILVIToken: no tokens to transfer',
+      )
+    })
+
+    it('Should fail to transfer tokens to backup address if deadline has passed', async function () {
+      await contract.connect(compromisedAccount).setBackupAddress(backupAccountAddress)
+      const deadLine = BigNumber.from(0)
+      const { v, r, s } = await getPermitSignature(compromisedAccount, contract, backupAccountAddress, 1000, deadLine)
+
+      await expect(contract.connect(compromisedAccount).emergencyTransfer(deadLine, v, r, s)).to.be.revertedWith(
+        'ERC20Permit: expired deadline',
+      )
     })
   })
 })
