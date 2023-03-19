@@ -56,14 +56,23 @@ For more information on the EIP712 standard, please refer to the Ethereum Improv
 ### Before using the contract, you need to set the following environment variables:
 
 `ALCHEMY_KEY`: your Alchemy API key
+
 `COINMARKETCAP_API_KEY`: your CoinMarketCap API key (optional, used to estimate transaction fees)
+
 `DEPLOYED_TOKEN_ADDRESS`: the address of the deployed token contract
+
 `RELAY_ADDRESS`: the address of the ILVTokenRelay contract
+
 `BLACKLISTED_ACCOUNT_DEPLOYED_TOKEN_ADDRESS`: the address of the BlacklistedAccount contract
+
 `OWNER_ACCOUNT`: the address of the owner account
+
 `COMPROMISED_ACCOUNT`: the address of the compromised account
+
 `BACKUP_ACCOUNT`: the address of the backup account
-`NO_ETH_ACCOUNT`: the address of an account with no ETH balance, can be used to test the emergency transfer function if the compromised account has no ETH balance
+
+`NO_ETH_ACCOUNT`: the address of an account with no ETH balance, can be used to test the emergency transfer 
+function if the compromised account has no ETH balance
 
 ### To get started, run the following commands:
 
