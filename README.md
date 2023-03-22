@@ -115,7 +115,7 @@ Also included some adicional scripts measure contract size:
 
 - `npm run size` to measure the contract size
 
-### Deployed Contracts Addresses
+### Deployed Contracts Addresses - Sepolia Testnet
 
 - ILVIToken: [0xa6Bc08EcAF04F752b27a147B1623b9f3FBFba973](https://sepolia.etherscan.io/address/0xa6Bc08EcAF04F752b27a147B1623b9f3FBFba973)
 
