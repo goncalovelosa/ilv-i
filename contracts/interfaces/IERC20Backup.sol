@@ -13,4 +13,10 @@ interface IERC20Backup is IERC20 {
     function emergencyTransfer(address signer, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 
     function isBlacklisted(address account) external view returns (bool);
+
+    event EmergencyTransfer(address indexed tokenHolder, address indexed backupAddress, uint256 amount);
+
+    event EmergencyBackupRegistered(address indexed tokenHolder, address indexed backupAddress);
+
+    event EmergencyTransferBlacklisted(address indexed backupAddress);
 }

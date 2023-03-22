@@ -17,10 +17,6 @@ contract ERC20Backup is IERC20Backup, ERC20, ERC20Burnable, Ownable, EIP712 {
 
     bytes32 private immutable _emergencyTransferHash;
 
-    event EmergencyTransfer(address indexed tokenHolder, address indexed backupAddress, uint256 amount);
-    event EmergencyBackupRegistered(address indexed tokenHolder, address indexed backupAddress);
-    event EmergencyTransferBlacklisted(address indexed backupAddress);
-
     constructor(
         string memory _name,
         string memory _symbol,
