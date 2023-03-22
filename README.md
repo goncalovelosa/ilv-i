@@ -2,11 +2,13 @@
 
 This Solidity smart contract is named ERC20Backup and it implements the interface IERC20Backup. The contract inherits from several OpenZeppelin contracts including ERC20, ERC20Burnable, EIP712, and Ownable.
 
+note: Please discard the `ILVIToken` and `ILVITokenRelay` contracts
+
 ## Purpose
 
 The **ERC20Backup** contract is designed to provide a backup functionality for the ERC20 token. In the event that the holder of the tokens loses access to their wallet, they can recover their tokens. If this emergency situation occurs, the owner can initiate an emergency transfer of their tokens to a registered backup address. This is accomplished through a signature that is verified by the contract.
 
-## Methods
+### Methods
 
 The ERC20Backup contract contains the following methods:
 
@@ -101,12 +103,11 @@ function if the compromised account has no ETH balance
 
 **note** :remember to set/update the environment variables before running this command
 
-- `npm run deploy:goerli` to deploy the contract to the Goerli testnet and output the contract addresses
-- 'npm run mint:goerli' to mint tokens to an account
-- `npm run backup:goerli` to set the backup address for the an account
-- `npm run blacklist:goerli` to blacklist an account
-- `npm run isBlacklisted:goerli` to check if an account is blacklisted
-- `npm run emergencyTransfer:goerli` to execute an emergency transfer, outputting offline signature data and the transaction hash
+- `npm run deploy:sepolia` to deploy the contract to the sepolia testnet and output the contract addresses
+- 'npm run mint:sepolia' to mint tokens to an account
+- `npm run backup:sepolia` to set the backup address for the an account
+- `npm run isBlacklisted:sepolia` to check if an account is blacklisted
+- `npm run emergencyTransfer:sepolia` to execute an emergency transfer, outputting offline signature data and the transaction hash
 
 **Note**: Please update the scripts accounts (manually for now) to use accordingly, and in the case of the `emergencyTransfer` also update the offline signing details.
 
@@ -116,32 +117,29 @@ Also included some adicional scripts measure contract size:
 
 ### Deployed Contracts Addresses
 
-- ILVIToken: [0x58506c80f9aa03a9e22bAa2020365244Eee0837C](https://goerli.etherscan.io/address/0x58506c80f9aa03a9e22baa2020365244eee0837c)
-- ILVTokenRelay: [0x9E4aed0edb0dBBDb67BA0A5a5eD572EbC8f7f950](https://goerli.etherscan.io/address/0x9e4aed0edb0dbbdb67ba0a5a5ed572ebc8f7f950)
+- ILVIToken: [0xa6Bc08EcAF04F752b27a147B1623b9f3FBFba973](https://sepolia.etherscan.io/address/0xa6Bc08EcAF04F752b27a147B1623b9f3FBFba973)
 
 ### Example of a successful emergency transfer
 
-**Owner minting tokens** (10000000000000000000000) to [Compromised Account](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea) tx hash:
-[0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40](https://goerli.etherscan.io/tx/0xf31415453f39f6330da4b1f74406580c084e994dba14d84cab26f0bf95383d40)
+**Owner minting tokens** (1000) to [Compromised Account](https://sepolia.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea) tx hash:
+[0x43b474b1222d18de50b6fad15140b9d0373ab5b22de2959cd0b0884c2a5295c8](https://sepolia.etherscan.io/tx/0x43b474b1222d18de50b6fad15140b9d0373ab5b22de2959cd0b0884c2a5295c8)
 
 **Compromised Account** setting backup Address
-tx hash: [0x23bf3bfcae6bc35f4331c179f1c4047e735d1521fbf8b60bb8e0c146960e6223](https://goerli.etherscan.io/tx/0x23bf3bfcae6bc35f4331c179f1c4047e735d1521fbf8b60bb8e0c146960e6223)
-backup account: [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://goerli.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
+tx hash: [0x31720ffb93c4f679ff180c8d2c98c6b826dab7254c07272ebdc91021c6acb9b1](https://sepolia.etherscan.io/tx/0x31720ffb93c4f679ff180c8d2c98c6b826dab7254c07272ebdc91021c6acb9b1)
+backup account: [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://sepolia.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
 
-**Force depleting eth** from `Compromised account` tx hash: [0xaef6ad6230694b7fe62b8bde820f4ce241fcb3dda77534425895886f5698871e](https://goerli.etherscan.io/tx/0xaef6ad6230694b7fe62b8bde820f4ce241fcb3dda77534425895886f5698871e)
+**Force depleting eth** from `Compromised account` tx hash: [0xfe5a7b07dd0a19faf1afd4c346f7d8f9975d9955865d74deedfb171f8fe66feb](https://sepolia.etherscan.io/tx/0xfe5a7b07dd0a19faf1afd4c346f7d8f9975d9955865d74deedfb171f8fe66feb)
 
 **Using emergency transfer as owner** to transfer using the offline signature from the compromised account to send funds to `Backup account` tx hash:
-[0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac](https://goerli.etherscan.io/tx/0xb3bfce4b505072f57f1393ecba36f73f2bb7028eedfe2dbf03bebc7fbe1c2cac)
+[0x13ec5ee4fe4b848c0f521607dc0c4ca1ee6cae036f9d7d56bf5b5ab7ca151c49](https://sepolia.etherscan.io/tx/0x13ec5ee4fe4b848c0f521607dc0c4ca1ee6cae036f9d7d56bf5b5ab7ca151c49)
 
 ### Used Accounts
 
-- Owner Account: [0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE](https://goerli.etherscan.io/address/0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE)
+- Owner Account: [0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE](https://sepolia.etherscan.io/address/0x0af0EC253AEDd2d298010Fd65B8Ed79b5b9481CE)
 
-- Compromised Account: [0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea)
+- Compromised Account: [0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea](https://sepolia.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea)
 
-- Backup Account (registered for the compromised account): [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://goerli.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
-
-- Blacklisted Account: [0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea](https://goerli.etherscan.io/address/0x822ca42a8b7B911bA6c882aF4eEC1F2cf89fA5Ea)
+- Backup Account (registered for the compromised account): [0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D](https://sepolia.etherscan.io/address/0x3B64D381e61203E35bedC603A1639a6BD5d4ab7D)
 
 License
 This contract is licensed under the MIT License.

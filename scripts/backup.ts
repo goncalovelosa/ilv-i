@@ -6,14 +6,14 @@ async function main() {
   const ILVIToken = getTokenContract()
 
   const accounts = await getWallets(network.name)
-  const account = accounts.noEthAccount
+  const account = accounts.compromised
   const { backup } = accounts
 
   console.log(
     `Set backup account on network: ${network.name} from address ${account.address} with backup as ${backup.address}`,
   )
-  const backupTx = await ILVIToken.connect(account).setBackupAddress(backup.address)
-  const receipt = await backupTx.wait(2)
+  const backupTx = await ILVIToken.connect(account).registerEmergencyBackupAddress(backup.address)
+  const receipt = await backupTx.wait(1)
 
   console.log(
     `Set backup account from address ${account.address} with backup as ${backup.address} with tx hash ${receipt.transactionHash}`,

@@ -6,7 +6,8 @@ import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-solhint'
 import '@nomiclabs/hardhat-ethers/signers'
 
-const alchemyKey = process.env.ALCHEMY_KEY
+const goerliAlchemyKey = process.env.ALCHEMY_KEY_GOERLI
+const sepoliaAlchemyKey = process.env.ALCHEMY_KEY_SEPOLIA
 const cmcKey = process.env.COINMARKETCAP_API_KEY
 
 const config: HardhatUserConfig = {
@@ -18,8 +19,12 @@ const config: HardhatUserConfig = {
       gasPrice: 20000000000,
     },
     goerli: {
-      url: `https://eth-goerli.g.alchemy.com/v2/${alchemyKey}`,
+      url: `https://eth-goerli.g.alchemy.com/v2/${goerliAlchemyKey}`,
       chainId: 5,
+    },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${sepoliaAlchemyKey}`,
+      chainId: 11155111,
     },
   },
   gasReporter: {
@@ -32,7 +37,7 @@ const config: HardhatUserConfig = {
     alphaSort: true,
     runOnCompile: false,
     disambiguatePaths: false,
-    except: ['Counters', 'ERC20', 'ECDSA', 'Math', 'Strings'],
+    except: ['Counters', 'ERC20.sol', 'ECDSA', 'Math', 'Strings'],
   },
 }
 

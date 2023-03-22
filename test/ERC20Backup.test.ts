@@ -18,12 +18,25 @@ describe('ERC20Backup', function () {
     const tokenFactory = await ethers.getContractFactory('ERC20Backup')
     token = await tokenFactory.connect(owner).deploy('ILVIToken', 'ILVI', version)
     await token.deployed()
+  })
 
-    await token.connect(owner).mint(compromisedAccount.address, 10000)
-    await token.connect(owner).mint(otherAccount.address, 10000)
+  describe('Mint', function () {
+    it('Should mint tokens', async function () {
+      const initialAmount = await token.balanceOf(owner.address)
+      const amountToMint = 1000
+
+      expect(await token.connect(owner).mint(compromisedAccount.address, amountToMint))
+        .to.emit(token, 'Transfer')
+        .withArgs(ethers.constants.AddressZero, compromisedAccount.address, initialAmount.add(amountToMint))
+    })
   })
 
   describe('Emergency Transfer', function () {
+    beforeEach(async function () {
+      await token.connect(owner).mint(compromisedAccount.address, 10000)
+      await token.connect(owner).mint(otherAccount.address, 10000)
+    })
+
     it('Should transfer tokens to backup address using emergency transfer', async function () {
       expect(await token.connect(compromisedAccount).registerEmergencyBackupAddress(compromisedBackupAccount.address))
         .to.emit(token, 'EmergencyBackupRegistered')
@@ -113,6 +126,11 @@ describe('ERC20Backup', function () {
   })
 
   describe('Register Emergency Backup Address', function () {
+    beforeEach(async function () {
+      await token.connect(owner).mint(compromisedAccount.address, 10000)
+      await token.connect(owner).mint(otherAccount.address, 10000)
+    })
+
     it('Should register emergency backup address', async function () {
       expect(await token.connect(compromisedAccount).registerEmergencyBackupAddress(compromisedBackupAccount.address))
         .to.emit(token, 'EmergencyBackupRegistered')

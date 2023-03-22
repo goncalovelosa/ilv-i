@@ -6,12 +6,13 @@ async function main() {
   const ILVIToken = getTokenContract()
 
   const accounts = await getWallets(network.name)
+  const account = accounts.compromised
 
-  console.log(`Checking if address ${accounts.blacklisted.address} is blacklisted`)
+  console.log(`Checking if address ${account.address} is blacklisted`)
 
-  const isBlacklisted = await ILVIToken.isBlacklisted(accounts.blacklisted.address)
+  const isBlacklisted = await ILVIToken.isBlacklisted(account.address)
 
-  console.log(`Address ${accounts.blacklisted.address} is blacklisted: ${isBlacklisted}`)
+  console.log(`Address ${account.address} is blacklisted: ${isBlacklisted}`)
 }
 
 main().catch((error) => {

@@ -6,7 +6,7 @@ async function main() {
 
   const accounts = await getWallets(network.name)
 
-  const destinationAddress = accounts.noEthAccount.address
+  const destinationAddress = accounts.compromised.address
   const amount = 1000
 
   console.log(`Minting on network: ${network.name}`)
