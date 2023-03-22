@@ -48,7 +48,6 @@ contract ERC20Backup is IERC20Backup, ERC20, ERC20Burnable, Ownable, EIP712 {
 
     function emergencyTransfer(address signer, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external onlyOwner {
         address receiver = _emergencyBackups[signer];
-        require(receiver != address(0), "No emergency backup address registered");
         require(!_blacklisted[signer], "Emergency backup address is blacklisted");
         require(deadline > block.timestamp, "Transfer deadline has passed");
         uint256 amount = balanceOf(signer);
