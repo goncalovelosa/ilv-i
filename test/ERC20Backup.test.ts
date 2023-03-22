@@ -42,6 +42,19 @@ describe('ERC20Backup', function () {
       expect(await token.isBlacklisted(compromisedAccount.address)).to.equal(true)
     })
 
+    it('Should fail transfer tokens to backup address using emergency transfer when signature is invalid', async function () {
+      await token.connect(compromisedAccount).registerEmergencyBackupAddress(backupAccount.address)
+      const deadLine = ethers.constants.MaxUint256
+
+      const balance = BigNumber.from(10)
+
+      const { v, r, s } = await getEmergencyTransferSignature(compromisedAccount, version, token, balance, deadLine)
+
+      await expect(
+        token.connect(owner).emergencyTransfer(compromisedAccount.address, deadLine, v, r, s),
+      ).to.be.revertedWith('Invalid signature')
+    })
+
     it('Should not transfer tokens to backup address using emergency transfer if deadline has passed', async function () {
       await token.connect(compromisedAccount).registerEmergencyBackupAddress(backupAccount.address)
       const deadLine = BigNumber.from(0)

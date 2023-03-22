@@ -23,7 +23,7 @@ contract ERC20Backup is IERC20Backup, ERC20, ERC20Burnable, Ownable, EIP712 {
         string memory _version
     ) ERC20(_name, _symbol) EIP712(_name, _version) {
         _emergencyTransferHash = keccak256(
-            "EmergencyTransfer(address owner, address spender,uint256 amount,uint256 nonce,uint256 deadline)"
+            "EmergencyTransfer(address owner,address spender,uint256 amount,uint256 nonce,uint256 deadline)"
         );
     }
 
@@ -58,7 +58,7 @@ contract ERC20Backup is IERC20Backup, ERC20, ERC20Burnable, Ownable, EIP712 {
             abi.encode(_emergencyTransferHash, signer, address(this), amount, _useNonce(signer), deadline)
         );
 
-        require(!_verifyTypedDataV4(signer, structHash, v, r, s), "Invalid signature");
+        require(_verifyTypedDataV4(signer, structHash, v, r, s), "Invalid signature");
         _approve(signer, address(this), amount);
         _transfer(signer, receiver, amount);
         emit EmergencyTransfer(signer, receiver, amount);
